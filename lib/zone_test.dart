@@ -9,7 +9,11 @@ main() {
 //  testStreamTransform();
 //  testPassParamInZone();
 //  zoneExceptionTest();
-  testTask();
+//  testTask();
+//  microTaskTest();
+//  testStreamInit();
+  testLogger();
+
 }
 
 /**
@@ -93,7 +97,8 @@ Future splitLines(filename) {
 void testPassParamInZone() {
   Future.forEach(
       ['d:\\test.txt', 'd:\\testA.txt'],
-      (file) => splitLines(file).then((lines) {
+          (file) =>
+          splitLines(file).then((lines) {
             lines.forEach(print);
           }));
 }
@@ -105,7 +110,7 @@ void overrideFunInZone() {
   runZoned(() {
     print('Will be ignored');
   }, zoneSpecification:
-      new ZoneSpecification(print: (self, parent, zone, message) {
+  new ZoneSpecification(print: (self, parent, zone, message) {
     // Ignore message.
 //    parent.print(zone, message);
   }));
@@ -154,37 +159,37 @@ void testTask() async {
   });
 }
 
-//main() {
-//  print('1');
-//  scheduleMicrotask(() => print('microtask 1'));
-//
-//  new Future.delayed(new Duration(seconds: 1), () => print('delayed'));
-//  new Future(() => print('future 1'));
-//  new Future(() => print('future 2'));
-//
-//  scheduleMicrotask(() => print('microtask 2'));
-//
-//  print('2');
-//}
+void microTaskTest() {
+  print('1');
+  scheduleMicrotask(() => print('microtask 1'));
 
-//Stream get asynchronousNaturals async* {
-//  print("Begin");
-//
-//  int k = 0;
-//  while (k < 3) {
-//    print("Before Yield");
-//    yield k++;
-//  }
-//
-//  print("End");
-//}
-//
-//main() {
-//  StreamSubscription subscription = asynchronousNaturals.listen(null);
-//  subscription.onData((value) {
-//    print(value);
-//  });
-//}
+  new Future.delayed(new Duration(seconds: 1), () => print('delayed'));
+  new Future(() => print('future 1'));
+  new Future(() => print('future 2'));
+
+  scheduleMicrotask(() => print('microtask 2'));
+
+  print('2');
+}
+
+Stream get asynchronousNaturals async* {
+  print("Begin");
+
+  int k = 0;
+  while (k < 3) {
+    print("Before Yield");
+    yield k++;
+  }
+
+  print("End");
+}
+
+void testStreamInit() {
+  StreamSubscription subscription = asynchronousNaturals.listen(null);
+  subscription.onData((value) {
+    print(value);
+  });
+}
 
 Iterable naturalsDownFrom(n) sync* {
   if (n > 0) {
@@ -193,26 +198,26 @@ Iterable naturalsDownFrom(n) sync* {
   }
 }
 
-//main() {
-//  for (var i in naturalsDownFrom(3)) {
-//    print(i);
-//  }
-//  print(naturalsDownFrom(3)
-//      .firstWhere((value) => value % 2 == 0, orElse: () => 8));
-//  var logger = Logger("zone_test");
-//  logger.info("info message");
-//  Logger log = new Logger(r"main");
-//
-//  Logger.root.level = Level.WARNING;
-//  Logger.root.onRecord.listen((LogRecord rec) {
-//    print('${rec.level.name}: ${rec.time}: ${rec.message}');
-//    if (rec.error != null && rec.stackTrace != null) {
-//      print('${rec.error}: ${rec.stackTrace}');
-//    }
-//  });
-//
-//  log.config("x=5");
-//  log.info("对x进行赋值");
-//  log.warning("x是double类型");
-//  log.severe("网络连接失败");
-//}
+void testLogger() {
+  for (var i in naturalsDownFrom(3)) {
+    print(i);
+  }
+  print(naturalsDownFrom(3)
+      .firstWhere((value) => value % 2 == 0, orElse: () => 8));
+  var logger = Logger("zone_test");
+  logger.info("info message");
+  Logger log = new Logger(r"main");
+
+  Logger.root.level = Level.WARNING;
+  Logger.root.onRecord.listen((LogRecord rec) {
+    print('${rec.level.name}: ${rec.time}: ${rec.message}');
+    if (rec.error != null && rec.stackTrace != null) {
+      print('${rec.error}: ${rec.stackTrace}');
+    }
+  });
+
+  log.config("x=5");
+  log.info("对x进行赋值");
+  log.warning("x是double类型");
+  log.severe("网络连接失败");
+}
